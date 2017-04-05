@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+  <tlib-version>1.0</tlib-version>
+  <short-name>tagdescriptor</short-name>
+  <uri>/WEB-INF/tlds/tagDescriptor</uri>
+      
+  <info>Custom tag library by Dennis. Yay</info>
+  
+  <tag>
+      <name>isEmpty</name>
+      <tagclass>music.controllers.CustomTags</tagclass>
+      <info>Puts an asterix where the fields are empty</info>
+      <body-content>empty</body-content>
+      <attribute>
+          <name>color</name>
+          <required>false</required>
+      </attribute>
+      
+      <attribute>
+          <name>field</name>
+          <required>true</required>
+          <rtexprvalue>true</rtexprvalue>
+      </attribute>
+  </tag>
+  
+  
+</taglib>
