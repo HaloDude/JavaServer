@@ -93,26 +93,47 @@ public class ProductIO {
     }
 
     public static void updateProduct(Product product) {
-        /*products = selectProducts();
-        for (int i = 0; i < products.size(); i++) {
-            Product p = products.get(i);
-            if (product.getCode() != null
-                    && product.getCode().equalsIgnoreCase(p.getCode())) {
-                products.set(i, product);
-            }
-        }
-        saveProducts(products);*/
+       ConnectionPool pool = ConnectionPool.getInstance();
+       Connection connection = pool.getConnection();
+       PreparedStatement ps = null;
+       
+       String query = "UPDATE product " 
+                + " SET ProductDescription = ?, ProductPrice = ? "
+                + " WHERE ProductCode = ?";
+   
+       try {
+           ps = connection.prepareStatement(query);
+           ps.setString(1, product.getDescription());
+           ps.setDouble(2, product.getPrice());
+           ps.setString(3, product.getCode());
+                          
+           ps.executeUpdate();
+       } catch (SQLException e) {
+           System.out.println(e);
+       } finally {
+           DBUtil.closePreparedStatement(ps);
+           pool.freeConnection(connection);
+       }
+      
     }
 
     public static void deleteProduct(Product product) {
-        /*products = selectProducts();
-        for (int i = 0; i < products.size(); i++) {
-            Product p = products.get(i);
-            if (product != null
-                    && product.getCode().equalsIgnoreCase(p.getCode())) {
-                products.remove(i);
-            }
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        
+        String query = "DELETE FROM product" 
+                + " WHERE ProductCode = ?";
+        try{
+            ps = connection.prepareStatement(query);
+            ps.setString(1, product.getCode());
+            
+            ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println(e);
+        } finally {
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
         }
-        saveProducts(products);*/
     }    
 }
