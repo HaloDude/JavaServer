@@ -3,21 +3,21 @@ package music.products;
 
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProductIO {
 
     private static List<Product> products = null;
-    private static String filePath = null;
-
-    // Called once from ProductAdminController based on servlet context
-    public static void init(String filePath) {
-        ProductIO.filePath = filePath;
-    }
-
+   
     public static List<Product> selectProducts() {
         products = new ArrayList<Product>();
-        File file = new File(filePath);
+        /*File file = new File(filePath);
         try {
             BufferedReader in
                     = new BufferedReader(
@@ -46,17 +46,51 @@ public class ProductIO {
         } catch (IOException e) {
             System.out.println(e);
             return null;
+        }*/
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        
+        ResultSet rs = null;
+        
+        String query = "SELECT * FROM product";
+        products = new LinkedList<>();
+        try{
+            ps = connection.prepareStatement(query);
+            rs = ps.executeQuery();
+            
+            Product p = null;
+            while(rs.next()){
+                p = new Product();
+                p.setCode(rs.getString("ProductCode"));
+                p.setDescription(rs.getString("ProductDescription"));
+                p.setPrice(rs.getDouble("ProductPrice"));
+                
+                products.add(p);
+            }
+            
+            return products;
+        } catch (SQLException e){
+            Logger.getLogger(ProductIO.class.getName()).log(Level.SEVERE, null, e);
+            
+        } finally {
+           DBUtil.closeResultSet(rs);
+           DBUtil.closePreparedStatement(ps);
+           pool.freeConnection(connection);
         }
+  
+        return null;
+        
     }
 
     public static Product selectProduct(String productCode) {
-        products = selectProducts();
+        /*products = selectProducts();
         for (Product p : products) {
             if (productCode != null
                     && productCode.equalsIgnoreCase(p.getCode())) {
                 return p;
             }
-        }
+        }*/
         return null;
     }
 
@@ -67,7 +101,7 @@ public class ProductIO {
     }    
     
     private static void saveProducts(List<Product> products) {
-        try {
+        /*try {
             File file = new File(filePath);
             PrintWriter out
                     = new PrintWriter(
@@ -83,17 +117,17 @@ public class ProductIO {
             out.close();
         } catch (IOException e) {
             System.out.println(e);
-        }
+        }*/
     }
 
     public static void insertProduct(Product product) {
-        products = selectProducts();
+        /*products = selectProducts();
         products.add(product);
-        saveProducts(products);
+        saveProducts(products);*/
     }
 
     public static void updateProduct(Product product) {
-        products = selectProducts();
+        /*products = selectProducts();
         for (int i = 0; i < products.size(); i++) {
             Product p = products.get(i);
             if (product.getCode() != null
@@ -101,11 +135,11 @@ public class ProductIO {
                 products.set(i, product);
             }
         }
-        saveProducts(products);
+        saveProducts(products);*/
     }
 
     public static void deleteProduct(Product product) {
-        products = selectProducts();
+        /*products = selectProducts();
         for (int i = 0; i < products.size(); i++) {
             Product p = products.get(i);
             if (product != null
@@ -113,6 +147,6 @@ public class ProductIO {
                 products.remove(i);
             }
         }
-        saveProducts(products);
+        saveProducts(products);*/
     }    
 }

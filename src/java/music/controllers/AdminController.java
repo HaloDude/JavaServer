@@ -23,7 +23,7 @@ public class AdminController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init(); //To change body of generated methods, choose Tools | Templates.
-        ProductIO.init(this.getServletContext().getRealPath(this.getServletContext().getInitParameter("productDatabase")));
+        //ProductIO.init(this.getServletContext().getRealPath(this.getServletContext().getInitParameter("productDatabase")));
        
     }
     
