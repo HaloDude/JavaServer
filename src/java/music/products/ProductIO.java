@@ -17,36 +17,6 @@ public class ProductIO {
    
     public static List<Product> selectProducts() {
         products = new ArrayList<Product>();
-        /*File file = new File(filePath);
-        try {
-            BufferedReader in
-                    = new BufferedReader(
-                            new FileReader(file));
-
-            String line = in.readLine();
-            while (line != null) {
-                StringTokenizer t = new StringTokenizer(line, "|");
-                if (t.countTokens() >= 3) {
-                    String code = t.nextToken();
-                    String description = t.nextToken();
-                    String priceAsString = t.nextToken();
-                    double price = Double.parseDouble(priceAsString);
-
-                    Product p = new Product();
-                    p.setCode(code);
-                    p.setDescription(description);
-                    p.setPrice(price);
-
-                    products.add(p);
-                }
-                line = in.readLine();
-            }
-            in.close();
-            return products;
-        } catch (IOException e) {
-            System.out.println(e);
-            return null;
-        }*/
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
@@ -84,13 +54,13 @@ public class ProductIO {
     }
 
     public static Product selectProduct(String productCode) {
-        /*products = selectProducts();
+        products = selectProducts();
         for (Product p : products) {
             if (productCode != null
                     && productCode.equalsIgnoreCase(p.getCode())) {
                 return p;
             }
-        }*/
+        }
         return null;
     }
 
@@ -99,31 +69,27 @@ public class ProductIO {
         if (p != null) return true;
         else return false;
     }    
-    
-    private static void saveProducts(List<Product> products) {
-        /*try {
-            File file = new File(filePath);
-            PrintWriter out
-                    = new PrintWriter(
-                            new FileWriter(file));
-
-            for (Product p : products) {
-                out.println(p.getCode() + "|"
-                        + p.getDescription() + "|"
-                        + p.getPrice());
-               
-            }
-
-            out.close();
-        } catch (IOException e) {
-            System.out.println(e);
-        }*/
-    }
 
     public static void insertProduct(Product product) {
-        /*products = selectProducts();
-        products.add(product);
-        saveProducts(products);*/
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        
+        String query = "INSERT INTO product(ProductCode, ProductDescription, ProductPrice)" 
+                + " VALUES (?, ?, ?)";
+        try{
+            ps = connection.prepareStatement(query);
+            ps.setString(1, product.getCode());
+            ps.setString(2, product.getDescription());
+            ps.setDouble(3, product.getPrice());
+            
+            ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println(e);
+        } finally {
+            DBUtil.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
     }
 
     public static void updateProduct(Product product) {
