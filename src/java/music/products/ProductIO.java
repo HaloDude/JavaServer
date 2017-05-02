@@ -10,47 +10,28 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 public class ProductIO {
 
     private static List<Product> products = null;
    
     public static List<Product> selectProducts() {
-        products = new ArrayList<Product>();
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
-        PreparedStatement ps = null;
-        
-        ResultSet rs = null;
-        
-        String query = "SELECT * FROM product";
-        products = new LinkedList<>();
-        try{
-            ps = connection.prepareStatement(query);
-            rs = ps.executeQuery();
-            
-            Product p = null;
-            while(rs.next()){
-                p = new Product();
-                p.setCode(rs.getString("ProductCode"));
-                p.setDescription(rs.getString("ProductDescription"));
-                p.setPrice(rs.getDouble("ProductPrice"));
-                
-                products.add(p);
-            }
-            
-            return products;
-        } catch (SQLException e){
-            Logger.getLogger(ProductIO.class.getName()).log(Level.SEVERE, null, e);
-            
+         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        String qString = "SELECT p from Product p";
+        TypedQuery<Product> q = em.createQuery(qString, Product.class);
+        List<Product> results = null;
+        try {
+            results = q.getResultList();
+        } catch (NoResultException ex) {
+            return null;
         } finally {
-           DBUtil.closeResultSet(rs);
-           DBUtil.closePreparedStatement(ps);
-           pool.freeConnection(connection);
+            em.close();
         }
-  
-        return null;
         
+        return results;
     }
 
     public static Product selectProduct(String productCode) {
@@ -71,7 +52,7 @@ public class ProductIO {
     }    
 
     public static void insertProduct(Product product) {
-        ConnectionPool pool = ConnectionPool.getInstance();
+        /*ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         
@@ -89,11 +70,11 @@ public class ProductIO {
         } finally {
             DBUtil.closePreparedStatement(ps);
             pool.freeConnection(connection);
-        }
+        }*/
     }
 
     public static void updateProduct(Product product) {
-       ConnectionPool pool = ConnectionPool.getInstance();
+       /*ConnectionPool pool = ConnectionPool.getInstance();
        Connection connection = pool.getConnection();
        PreparedStatement ps = null;
        
@@ -113,12 +94,12 @@ public class ProductIO {
        } finally {
            DBUtil.closePreparedStatement(ps);
            pool.freeConnection(connection);
-       }
+       }*/
       
     }
 
     public static void deleteProduct(Product product) {
-        ConnectionPool pool = ConnectionPool.getInstance();
+        /*ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
         
@@ -134,6 +115,6 @@ public class ProductIO {
         } finally {
             DBUtil.closePreparedStatement(ps);
             pool.freeConnection(connection);
-        }
+        }*/
     }    
 }
